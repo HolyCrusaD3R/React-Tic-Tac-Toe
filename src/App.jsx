@@ -11,6 +11,32 @@ const initialGameBoard = [
     [null, null, null]
 ];
 
+function deriveGameBoard(gameLog) {
+  let gameBoard = [...initialGameBoard.map(innerArray => [...innerArray])];
+
+  for(const turn of gameLog) {
+      const { square, player } = turn;
+      const { row, col } = square;
+      gameBoard[row][col] = player;
+  }
+
+  return gameBoard;
+}
+
+function deriveWinner(gameBoard, players) {
+  let winner = null;
+
+  for(const combination of WINNING_COMBINATIONS) {
+    const firstSquareSymbol = gameBoard[combination[0].row][combination[0].column];
+    const secondSquareSymbol = gameBoard[combination[1].row][combination[1].column];
+    const thirdSquareSymbol = gameBoard[combination[2].row][combination[2].column];
+    if(firstSquareSymbol && (firstSquareSymbol === secondSquareSymbol && secondSquareSymbol === thirdSquareSymbol)) {
+      winner = players[firstSquareSymbol];
+    }
+  }
+
+  return winner;
+}
 
 function deriveActivePlayer(gameLog) {
   let activePlayer = "X";
@@ -29,32 +55,13 @@ function App() {
   });
 
   let activePlayer = deriveActivePlayer(gameLog);
+  let gameBoard = deriveGameBoard(gameLog);
 
-
-  let gameBoard = [...initialGameBoard.map(innerArray => [...innerArray])];
-
-  for(const turn of gameLog) {
-      const { square, player } = turn;
-      const { row, col } = square;
-      gameBoard[row][col] = player;
-  }
-
-  let winner = null;
-
-  for(const combination of WINNING_COMBINATIONS) {
-    const firstSquareSymbol = gameBoard[combination[0].row][combination[0].column];
-    const secondSquareSymbol = gameBoard[combination[1].row][combination[1].column];
-    const thirdSquareSymbol = gameBoard[combination[2].row][combination[2].column];
-    if(firstSquareSymbol && (firstSquareSymbol === secondSquareSymbol && secondSquareSymbol === thirdSquareSymbol)) {
-      winner = players[firstSquareSymbol];
-    }
-  }
-
+  
+  const winner = deriveWinner(gameBoard, players);
   const hasDraw = gameLog.length === 9 && !winner;
 
   function handleSelectSquare(rowIndex, colIndex) {
-    // setActivePlayer((prevActivePlayer) => prevActivePlayer === "X" ? "O" : "X");
-    
     setGameLog((prevGameLog => {
       let currentPlayer = deriveActivePlayer(prevGameLog);
 
