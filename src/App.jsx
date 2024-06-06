@@ -51,7 +51,7 @@ function App() {
   const [gameLog, setGameLog] = useState([]);
   const [players, setPlayers] = useState({
     X: 'Player 1',
-    Y: 'Player 2'
+    O: 'Player 2'
   });
 
   let activePlayer = deriveActivePlayer(gameLog);
